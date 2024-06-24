@@ -1,0 +1,14 @@
+#wrapper, #result {
+    border: solid 1px black;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 10px;
+    margin: auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#result {
+    margin: 10px;
+    border: none;
+}
