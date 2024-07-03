@@ -2,40 +2,31 @@ const express = require("express");
 let app = express();
 
 app.use(express.urlencoded({extended: true}));
-app.use(express.static("public"));
+// tell the website to look into a folder names "public" whenever the browser needs any static files, "public" can be renamed to anything else we want.
+app.use(express.static("public")); 
+// set the view engine to ejs. must have a folder names "views" to hold the ejs files.
 app.set("view engine", "ejs");
 
 const PORT = 3000;
 
-const TITLE = "Temperature Converter";
+let result = "";
 
 app.get("/", (req, res)=> { 
-    res.render("pages/index", { title: TITLE, result: ""}); 
+    res.render("pages/index", { result });
 })
 
-app.post("/index", (req, res)=> {
-    let formData = req.body;
-    // let userName = formData.username;
-    // if (databaseOfUsernames.includes(userName)) {
-    //     res.render("pages/result", { result: MESSAGES.SUCCESS });
-    // } 
-    //     res.render("pages/result", { result: MESSAGES.FAILURE }); 
-    let userInput = formData.userInput;
-    console.log(isNaN(userInput));
-    let buttonType = formData.buttonType;
+app.post("/convert", (req, res) => {
+    // the router now render pages under "views" folder.
+    const { userInput, buttonType } = req.body;
 
-    if(userInput == "" || isNaN(userInput)) {
-        res.render("pages/index", {title: TITLE, result: `Please make sure to input a number`});
+    if(buttonType === "ctof") {
+        const f = Math.round((1.8 * userInput) + 32);
+        result = `${userInput} C is ${f} F`;
     } else {
-        if(buttonType === "ctof") {
-            const f = (1.8 * userInput) + 32;
-            res.render("pages/index", {title: TITLE, result: `${userInput} degrees celsius is ${f} degrees fahrenheit`})
-        } else {
-            const c = 5 / 9 * (userInput - 32);
-            res.render("pages/index", {title: TITLE, result: `${userInput} degrees fahrenheit is ${c} degrees celsius`})
-        }
+        const c = Math.round(5 / 9 * (userInput - 32));
+        result = `${userInput} F is ${c} C`
     }
-    
-});
+    res.redirect("/")
+})
 
-app.listen(PORT);
+app.listen(PORT, () => console.log("Server Running..."));
